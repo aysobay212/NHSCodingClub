@@ -1,0 +1,18 @@
+import math
+
+sum_of_prime = 0
+
+for current_number in range(2, 2_000_000, 1):
+    flag = 1
+    current_divisor = 2
+    max = math.floor(math.sqrt(current_number))
+    while (current_divisor <= max):
+        if (current_number%current_divisor == 0):
+            flag = 0
+            break
+        else:
+            current_divisor = current_divisor + 1
+    if (flag == 1):
+        print(current_number)
+        sum_of_prime = sum_of_prime + current_number
+print(sum_of_prime)
