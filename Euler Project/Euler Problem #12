@@ -1,0 +1,13 @@
+current_number = 22414860
+x = 6695
+current_number_divisor = []
+while (len(current_number_divisor) <= 500):
+    print(f"number: {current_number}, factors: {len(current_number_divisor)}")
+    current_number_divisor = []
+    x += 1
+    current_number = current_number + x
+    for current_divisor in range(1, int((current_number/2)+1)):
+        if (current_number%current_divisor == 0):
+            current_number_divisor.append(current_number/current_divisor)
+    current_number_divisor.append(1.0)
+print(f"The number was: {current_number}, with {len(current_number_divisor)} factors, which were: {current_number_divisor}")
