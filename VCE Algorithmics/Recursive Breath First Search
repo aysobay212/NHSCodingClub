@@ -1,0 +1,27 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def RecursiveDFS(g, starting_node):
+    node_list[starting_node] = True
+    for neighbours in g[starting_node]:
+        if node_list[neighbours] == False:
+            RecursiveDFS(g, neighbours)
+            
+G = nx.Graph()  # create the graph template
+
+node_list = {'A':False, 'B':False, 'C':False, 'D':False, 'E':False, 'F':False, 'G':False, 'H':False}
+edge_list = [('A', 'B'), ('B', 'C'), ('C', 'D'), ('C', 'E'), ('E', 'F'), ('F', 'G'), ('G', 'H')]
+
+#add nodes
+G.add_nodes_from(node_list.keys())
+# add edges
+G.add_edges_from(edge_list)
+
+pos = nx.spring_layout(G) #layout of graph
+nx.draw_networkx_nodes(G, pos, node_color='Pink', node_size=1000) #customise node color and size
+nx.draw_networkx_labels(G, pos)
+nx.draw_networkx_edges(G, pos, edge_color='Grey') #customise edge color
+plt.show()
+
+RecursiveDFS(G, 'A')
+print(node_list)
