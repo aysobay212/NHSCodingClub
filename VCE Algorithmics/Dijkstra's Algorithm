@@ -1,0 +1,55 @@
+import math
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+def dijkstra(G, startNode):
+    unvisitedNodes = list(G.nodes)
+    shortestPath = {}  # distance on each node while processing so far
+    previousNodes = {}  # shortest known path previous node to current node so far
+
+    for node in unvisitedNodes:
+        shortestPath[node] = math.inf  # initialise all nodes distance to infinity
+        shortestPath[startNode] = 0  # starting node's distance initialise with 0
+
+    while unvisitedNodes:
+        # find the node with the lowest distance so far
+        currentMinNode = None
+        for node in unvisitedNodes:  # Iterate over the nodes
+            if currentMinNode == None:
+                currentMinNode = node
+            elif shortestPath[node] < shortestPath[currentMinNode]:
+                currentMinNode = node
+
+        for V in G.neighbors(currentMinNode):
+            tentativeValue = shortestPath[currentMinNode] + G[currentMinNode][V]['weight']
+            if tentativeValue < shortestPath[V]:
+                shortestPath[V] = tentativeValue  # relax the edges
+                previousNodes[V] = currentMinNode  # save path
+
+        unvisitedNodes.remove(currentMinNode)  # remove the processed node from unvisited
+
+    print(previousNodes)
+    print(shortestPath)
+    return
+
+node_list = [1, 2, 5, 3, 6, 4]
+weighted_edge_list = [(1, 2, 2), (1, 5, 3), (2, 3, 7), (2, 6, 1), (3, 6, 4), (3, 4, 6), (4, 6, 4), (4, 5, 8)]
+
+G = nx.Graph()
+
+G.add_weighted_edges_from(weighted_edge_list)
+
+pos = nx.spring_layout(G)
+
+nx.draw_networkx_nodes(G, pos, node_size=700, node_color='Yellow')
+nx.draw_networkx_labels(G, pos, font_size=20, font_family='sans-serif')
+nx.draw_networkx_edges(G, pos, width=1, edge_color='Blue')
+# edge labels
+edge_labels = dict([((u, v), d['weight'])
+                    for u, v, d in G.edges(data=True)])
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+plt.axis('off')
+plt.show()
+
+dijkstra(G,1)
