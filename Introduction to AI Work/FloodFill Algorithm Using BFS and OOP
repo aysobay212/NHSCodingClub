@@ -1,0 +1,90 @@
+class Node:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.neighbours = list()
+ 
+ def start():
+    
+    # 0 are obstacles
+    # 1 are free or empty spaces
+    # pixel is the value once it has been filled 
+
+    image = [
+                [1,0,0,0,0],
+                [1,1,0,1,0],
+                [0,1,1,1,0],
+                [0,1,1,1,1],
+                [0,1,1,0,1]
+            ]
+
+    graph = Graph()
+
+    print(graph.floodFill(image, 2, 2, 2))
+    
+    return graph
+    
+class Graph:
+    numberOfNonUniqueEdges = 0
+    
+    explored = set()
+
+    def floodFill(self, image, x, y, pixel):
+        #pixel is what we are changing the 1 value to to mark it as filled
+        #self is for the node objects(?)
+        start = Node(x, y)
+
+        queue = list()
+
+        queue.append(start)
+
+        image[start.y][start.x] = pixel #set start node to pixel value
+        while len(queue) > 0: #run loop as long as there are nodes to discover
+            currentNode = queue.pop(0) #dequeue
+            self.explored.add(currentNode) #add node to explored set
+
+            x = currentNode.x #get x value of currentNode
+            y = currentNode.y #get y value of currentNode
+
+            self.neighbours(image, x, y, currentNode) #looks for neighbours 
+            
+            for adjacent_neighbour in currentNode.neighbours:
+                if adjacent_neighbour not in self.explored: #separating the conditions to make it easier for myself to understand the logic
+                    if image[adjacent_neighbour.y][adjacent_neighbour.x] == 1: #update matrix if it is a node to update
+                        image[adjacent_neighbour.y][adjacent_neighbour.x] = pixel #set node to pixel value
+                        queue.append(adjacent_neighbour) #set node to be explored in queue ADT
+                        
+        return image
+
+    def neighbours(self, image, x, y, currentNode):
+        U = y - 1
+        D = y + 1
+        L = x - 1
+        R = x + 1
+        
+    
+        #to note that matrix evaluation is matrix[y][x]
+        #following code will check whether the neighbouring node is inside the matrix
+        if U >= 0: #evaluate UP neighbour
+            if image[U][x] == 1 or image[U][x] == 2:
+                currentNode.neighbours.append(Node(x, U))
+        
+        if D <= 4: #evaluate DOWN neighbour
+            if image[D][x] == 1 or image[D][x] == 2:
+                currentNode.neighbours.append(Node(x, D))
+        
+        if L >= 0: #evaluate LEFT neighbour
+            if image[y][L] == 1 or image[y][L] == 2:
+                currentNode.neighbours.append(Node(L, y))
+        
+        if R <= 4: #evaluate RIGHT neighbour
+            if image[y][R] == 1 or image[y][R] == 2:
+                currentNode.neighbours.append(Node(R, y))                
+    
+
+        self.numberOfNonUniqueEdges = self.numberOfNonUniqueEdges + len(currentNode.neighbours)
+        #there are multiple ways to get neighbours, this is based on non-obstacles
+      
+        return currentNode.neighbours
+
+graph = start()
