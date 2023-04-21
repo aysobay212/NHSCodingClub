@@ -1,0 +1,62 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def FWTC(G):
+    number_of_nodes = G.number_of_nodes()
+    nodes = sorted(G.nodes) #THIS IS VERY IMPORTANT
+    #Use following if nodes are not integers
+    mapping_dictionary = {}
+    value = 0
+    for node in nodes:
+        mapping_dictionary[node] = value
+        value += 1
+    print(mapping_dictionary)
+
+    #intialises matrix of VxV dimensions with value of 0 or 1
+    distance_matrix = []
+    for x in nodes:
+        temp_list = []
+        for y in nodes:
+            if x == y or G.has_edge(x, y):
+                print(x, y)
+                temp_list.append(1)
+            else:
+                temp_list.append(0)
+        distance_matrix.append(temp_list)
+    print("FIRST")
+    print(distance_matrix)
+    edges = [e for e in G.edges] #gets edge list in a list coordinate form
+
+    print(edges)
+    for mid in nodes:
+        # prints matrix in a nice way
+        for x in distance_matrix:
+            print(x)
+        print("\n")
+        for start in nodes:
+            for end in nodes:
+                if G.has_edge(start, end) == False:
+                    if G.has_edge(start, mid) and G.has_edge(mid, end):
+                        distance_matrix[mapping_dictionary[start]][mapping_dictionary[end]] = 1
+
+
+
+node_list = {'1', '2', '3', '4'}
+edge_list = [('4', '1'), ('2', '4'), ('2', '3'), ('3', '2'), ('4', '3')]
+
+g = nx.DiGraph()
+
+g.add_nodes_from(node_list)  # add nodes
+
+g.add_edges_from(edge_list)
+
+pos = nx.spring_layout(g)  # selects layout
+
+nx.draw_networkx_nodes(g, pos)
+nx.draw_networkx_labels(g, pos)
+nx.draw_networkx_edges(g, pos, edge_color="blue")
+
+plt.axis("off")
+plt.show()
+
+FWTC(g)
