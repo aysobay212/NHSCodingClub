@@ -1,0 +1,54 @@
+facts = {
+    #This is a dictionary with key:value structure, keyword:fact
+    #Fact 1: integer
+    "the-turing-test":1950,
+    #Fact 2: string
+    "alan-turing-info":"Alan Turing was an important figure in the history of Computer Science, especially notable for the development of the Turing Test and The Enigma machine.",
+    #Fact 3: list
+    "pass-the-turing-test":["natural language processing", "knowledge representation", "automated reaosning", "machine learning"],
+    #Fact 4: first-year-of-ai (what year was AI generally recognised)
+    "first-year-of-ai":1956,
+    #Fact 5: your choice
+    "checkers-ai-info":"Arthur Samuel from IBM and Christopher Strachey from the University of Manchester both independently created machine learning AIs, which had the ability to beat a human player in a game of checkers in 1952."
+    ###
+}
+running = True
+
+print("Hi, I'm an AI History/Definition Knowledge based system\n")
+
+while running:
+    question_from_user = str(input("Do you have a question related to AI?\n")).lower()
+    
+    if "turing test" in question_from_user and "year" in question_from_user:
+        #This will answer fact 1, an f-string is used here for convience sake
+        print(f"The turing test was conducted in {facts['the-turing-test']} by famous computer scientist Alan Turing")
+    
+    elif "alan turing" in question_from_user or "a. turing" in question_from_user:
+        #This will answer fact 2
+        print(facts['alan-turing-info'])
+        
+    elif "turing test" in question_from_user and "pass" in question_from_user:
+        #This will answer fact 3
+        #list_content calls the list from the KB and turns it into a nice string for the output
+        list_content = ', '.join(str(p) for p in facts['pass-the-turing-test'])
+        print(f"To pass Turing Test, the non-human entity must possess the following four main components: {list_content}")
+    
+    elif "year of ai" in question_from_user:
+        #This will answer fact 4
+        print(f"The term 'Artificial Intelligence' was first formally coined by John McCarthy after his AI breakthrough workshop in the year {facts['first-year-of-ai']}")
+    
+    elif "checkers" in question_from_user or "checkers ai" in question_from_user or ("john mccarthy" in question_from_user and "checkers" in question_from_user) or ("arthur samuel" in question_from_user and "checkers" in question_from_user):
+        #This will answer fact 5
+        print(facts["checkers-ai-info"])
+    
+    elif "end" in question_from_user or "stop" in question_from_user or "quit" in question_from_user or "exit" in question_from_user or len("question_from_user") == 0:
+        #This will end the program if the user decides to do so
+        print("You have ended the program.")
+        running = False
+    else:
+        #This will be the output if the user inputs something that the AI does not understand
+        print("Sorry, I am either confused about your question or I do not have the answer to your question.")
+        
+
+
+###
