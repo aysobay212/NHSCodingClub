@@ -1,0 +1,33 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+def TopologicalSort(G):
+    order_list = []
+    while G.nodes:
+        nodes_to_remove = [node for node in G.nodes if G.in_degree(node) == 0]
+        for eviction in nodes_to_remove:
+            G.remove_node(eviction)
+            order_list.append(eviction)
+    print(order_list)
+
+node_list = {'socks', 'shorts', 'shoes', 'pants', 'belt', 'shirt', 'jacket', 'tie', 'watch'}
+edge_list = [('socks', 'shoes'), ('shorts', 'shoes'), ('shorts', 'pants'), ('pants', 'shoes'), ('pants', 'belt'),
+             ('shirt', 'belt'), ('shirt', 'tie'), ('belt', 'jacket'), ('tie', 'jacket')]
+
+g = nx.DiGraph()
+
+g.add_nodes_from(node_list)  # add nodes
+
+g.add_edges_from(edge_list)
+
+pos = nx.spring_layout(g)  # selects layout
+
+nx.draw_networkx_nodes(g, pos)
+nx.draw_networkx_labels(g, pos)
+nx.draw_networkx_edges(g, pos, edge_color="blue")
+
+plt.axis("off")
+plt.show()
+
+TopologicalSort(g)
