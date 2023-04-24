@@ -1,0 +1,131 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+# class for Item with data and priority
+class Item:
+    def __init__(self, info, priority):
+        self.info = info
+        self.priority = priority
+
+
+# class for Priority queue
+class PriorityQueue:
+    def __init__(self):
+        self.queue = list()
+        # if you want you can set a maximum size for the queue
+        return
+
+    def enqueue(self, item):
+        # if queue is empty
+        if self.size() == 0:
+            # add the new item
+            self.queue.append(item)
+        else:
+            # traverse the queue to find the right place for new item
+            for x in range(0, self.size()):
+                # if the priority of new item is greater
+                if item.priority >= self.queue[x].priority:
+                    # if we have traversed the complete queue
+                    if x == (self.size() - 1):
+                        # add new node at the end
+                        self.queue.insert(x + 1, item)
+                    else:
+                        continue
+                else:
+                    self.queue.insert(x, item)
+                    return True
+
+    def dequeue(self):
+        # remove the first item from the queue
+        return self.queue.pop(0)
+
+    def show(self):
+        for x in self.queue:
+            print(str(x.info) + " - " + str(x.priority))
+
+    def front(self):
+        # gets the value of the front of the pqueue
+        return (str(self.queue[0].info))
+
+    def front_queue(self):
+            return (str(self.queue[0].priority))
+
+
+    def size(self):
+        return len(self.queue)
+
+
+def Prims(g):
+    mst = nx.Graph()
+    mst_node_list = []  # visited nodes
+    mst_edge_list = []
+    starting_node = [z for z in g.nodes][0]  # gets a random node to start the MST
+    mst_node_list.append(starting_node)  # adds starting node to MST
+    p_queue = PriorityQueue()
+    temp_neighbour_list = [z for z in g.edges(starting_node, data=True)] #easier to visualise data
+
+    for neighbour in temp_neighbour_list:
+        p_queue.enqueue(Item(f"({neighbour[0]}, {neighbour[1]})", neighbour[2].get('weight')))
+
+
+    while p_queue.size() > 0:
+        current_edge = p_queue.front() #first edge
+        print(current_edge)
+        current_edge_weight = p_queue.front_queue() #edge's weight
+
+        p_queue.dequeue()
+
+        if current_edge[-2] not in mst_node_list:
+            mst_node_list.append(current_edge[-2])
+            mst_edge_list.extend([(f'{current_edge[1]}', f'{current_edge[-2]}', current_edge_weight)])
+            for neighbour in g.edges(current_edge[-2], data=True):
+                if neighbour[1] not in mst_node_list:
+                    p_queue.enqueue(Item(f"({neighbour[0]}, {neighbour[1]})", neighbour[2].get('weight')))
+    mst.add_nodes_from(mst_node_list)
+    mst.add_weighted_edges_from(mst_edge_list)
+
+    pos = nx.spring_layout(mst)
+
+    nx.draw_networkx_nodes(mst, pos, node_color='lightblue', node_size=550)  # node color and size
+    nx.draw_networkx_labels(mst, pos)  # node label?
+    nx.draw_networkx_edges(mst, pos, edge_color='darkblue', width=2)  # edge color and width
+
+    # edge labels
+    mst_edge_labels = dict([((u, v), d["weight"])
+                        for u, v, d in mst.edges(data=True)])
+    nx.draw_networkx_edge_labels(mst, pos, edge_labels=mst_edge_labels)
+    plt.axis("off")
+    plt.show()
+
+
+# print(neighbours[0][2].get('weight'))
+# sorted_x = sorted(neighbours[0][2].items(), key=lambda kv: kv[1])
+# node_list is a dictionary with its key being the name, and the associated values
+
+# being the node's attributes
+# edge_list is a list which stores two nodes per item and its corresponding weight
+node_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+weighted_edge_list = [('A', 'B', 2), ('A', 'C', 3), ('A', 'D', 3), ('B', 'C', 4), ('B', 'E', 3),
+                      ('C', 'D', 5), ('C', 'F', 6), ('C', 'E', 1), ('D', 'F', 7), ('E', 'F', 8), ('F', 'G', 9)]
+
+# create graph template
+G = nx.Graph()
+
+G.add_nodes_from(node_list)
+G.add_weighted_edges_from(weighted_edge_list)
+
+# pos = nx.spring_layout(G)
+#
+# nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=550)  # node color and size
+# nx.draw_networkx_labels(G, pos)  # node label?
+# nx.draw_networkx_edges(G, pos, edge_color='darkblue', width=2)  # edge color and width
+#
+# # edge labels
+# edge_labels = dict([((u, v), d["weight"])
+#                     for u, v, d in G.edges(data=True)])
+# nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+# plt.axis("off")
+# #plt.show()
+
+Prims(G)
