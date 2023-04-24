@@ -1,0 +1,58 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+def PageRankAlgorithm(g, node, damping_factor, page_rank_values):
+    sum_of_indicaing_nodes = []
+
+    indicating_node_into_given_node_list = []
+    for indicating_node_into_given_node in g.in_edges(node):
+        indicating_node_into_given_node_list.append(indicating_node_into_given_node[0])  # this is the indicating node into given node, node
+
+    for to_sum in indicating_node_into_given_node_list:
+        sum_of_indicaing_nodes.append((page_rank_values.get(to_sum)[-1])/g.out_degree(to_sum))
+
+    calculation = ((1 - damping_factor)/len(g.nodes)) + (damping_factor * (sum(sum_of_indicaing_nodes)))
+
+    return calculation
+
+
+def PageRank(g, damping_factor):
+    page_rank_values = {}
+    for node in g.nodes:  # for the i = 0th iteration, initialising values
+        page_rank_values[node] = [1 / len(g.nodes)]
+
+    for x in range(0, len(g.nodes)):  # this will run PageRank based on the number of nodes present
+        to_add_final = {}
+        for node in g.nodes:
+            to_add_final[node] = ''
+        for node in sorted(g.nodes):
+            to_add_final[node] = PageRankAlgorithm(g, node, damping_factor, page_rank_values) #must finish iteration
+
+        for items in to_add_final: #len(to_add_final) == len(page_rank_values, adds from temp to main
+            page_rank_values[items].append(to_add_final[items])
+
+    print("Structure, NODE NAME: INITIALISATION, I(1), I(1), ... , I(n)")
+    for key in sorted(page_rank_values.keys()):
+        print(f"Node {key}: {page_rank_values[key]}")
+
+
+node_list = {'1', '2', '3'}
+edge_list = [('1', '2'), ('2', '1'), ('2', '3'), ('3', '1')]
+
+g = nx.DiGraph()
+
+g.add_nodes_from(node_list)  # add nodes
+
+g.add_edges_from(edge_list)
+
+pos = nx.spring_layout(g)  # selects layout
+
+nx.draw_networkx_nodes(g, pos)
+nx.draw_networkx_labels(g, pos)
+nx.draw_networkx_edges(g, pos, edge_color="blue")
+
+plt.axis("off")
+plt.show()
+
+PageRank(g, 0.85)
