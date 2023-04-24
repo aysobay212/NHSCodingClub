@@ -1,0 +1,17 @@
+def RecursiveDFS(g, v, visited, treasure, x, desire):
+    if x < desire:
+        visited.append(v)
+        neighbour_list = [z for z in g.neighbors(v)]
+        neighbour_list.append(v)
+        for u in neighbour_list:
+            if u in treasure:
+                x += 1
+            if u not in visited:
+                RecursiveDFS(g, u, visited, treasure, x, desire)
+    else:
+        return
+
+
+visited = []
+RecursiveDFS(a, 'S', visited, ['f', 'a'], 0, 1)
+print(visited)
