@@ -1,0 +1,52 @@
+import math
+
+import networkx as nx
+import matplotlib.pyplot as plt
+import math as math
+
+
+def BellmanFord(g, starting_node):
+    distance_dict = {}  # structure of dictionary is node: distance, predecessor
+    for node in g.nodes:  # initialises
+        distance_dict[node] = [math.inf]
+        distance_dict[node].append(None)
+
+    distance_dict[starting_node][0] = 0
+    distance_dict[starting_node][1] = starting_node
+    for x in range(0, len(g.nodes) - 1):  # iterates |V|-1 times
+        for node in g.nodes:  # alternative way to make it easier to comprehend, edges for each node
+            for edge in g.out_edges(node, data=True):
+                if distance_dict[edge[0]][0] + edge[2].get('weight') < distance_dict[edge[1]][0]:
+                    if distance_dict[edge[0]][1] != None:
+                        distance_dict[edge[1]][0] = distance_dict[edge[0]][0] + edge[2].get('weight')
+                        distance_dict[edge[1]][1] = edge[0]
+    for edge in g.edges(data=True):  # negative weight cycle test
+        if distance_dict[edge[0]][0] + edge[2].get('weight') < distance_dict[edge[1]][0]:
+            print("ERROR: NEGATIVE WEIGHT CYCLE EXISTS")
+    print(distance_dict)
+
+
+node_list = ['S', 'A', 'B', 'C', 'D', 'E']
+weighted_edge_list = [('S', 'E', 8), ('S', 'A', 10), ('A', 'C', 2), ('B', 'A', 1),
+                      ('C', 'B', -2), ('D', 'C', -1), ('D', 'A', -4), ('E', 'D', 1)]
+
+# create graph template
+G = nx.DiGraph()
+
+G.add_nodes_from(node_list)
+G.add_weighted_edges_from(weighted_edge_list)
+
+pos = nx.spring_layout(G)
+
+nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=550)  # node color and size
+nx.draw_networkx_labels(G, pos)  # node label?
+nx.draw_networkx_edges(G, pos, edge_color='darkblue', width=2)  # edge color and width
+
+# edge labels
+edge_labels = dict([((u, v), d["weight"])
+                    for u, v, d in G.edges(data=True)])
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+plt.axis("off")
+plt.show()
+
+BellmanFord(G, 'S')
