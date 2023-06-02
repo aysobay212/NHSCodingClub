@@ -1,0 +1,163 @@
+from math import sqrt
+from matplotlib import pyplot as plot
+from random import seed
+from random import randrange
+from csv import reader
+
+def load_csv(filename, skip = False):
+
+    dataset = list()
+  
+    with open(filename, 'r') as file:
+        csv_reader = reader(file)
+        
+        # Skip the header, if needed
+        if skip:
+            next(csv_reader, None)
+        
+        for row in csv_reader:
+            dataset.append(row)
+        
+    return dataset
+
+def string_column_to_float(dataset, column):
+    for row in dataset:
+        row[column] = float(row[column].strip())
+      
+def mean(values):
+    mean = sum(values)/float(len(values))
+    
+    return mean
+
+def leastSquares(dataset):
+    x = list()
+    y = list()
+    
+    for row in dataset:
+        x.append(row[0])
+        
+    for row in dataset:
+        y.append(row[1])
+
+    b0 = 0
+    b1 = 0
+
+    #start numerator code (covariance)
+    covariance_b1 = 0.0
+    
+    for i in range(len(x)):
+        covariance_b1 = covariance_b1 + ((x[i] - mean(x)) * (y[i] - mean(y)))
+    #end numerator code
+    
+    #start denominator code (variance)
+    difference = list()
+    
+    for j in x:#WHAT IS VALUES AND MEAN
+        difference.append((j - mean(x)) ** 2)
+    variance_b1 = sum(difference)
+    #end denominator code
+    
+    b1 = covariance_b1/variance_b1
+    b0 = mean(y) - b1 * mean(x)    
+    return [b0, b1]
+
+def root_mean_square_error(actual, predicted):
+    sum_error = 0.0
+    # Loops through the difference between the prediction
+    # and the actual output
+    # Then update the sum error
+    for i in range(len(actual)):
+        prediction_error = predicted[i] - actual[i]
+        sum_error = sum_error + (prediction_error ** 2)  
+    # Take the average
+    mean_error = sum_error/float(len(actual))
+    return sqrt(mean_error)
+
+
+#predictions
+def simple_linear_regression(train, test):
+    predictions = list()
+    b0, b1 = leastSquares(train)
+    
+    # Calculate the prediction (yhat)
+    for row in test:
+        yhat = b0 + b1 * row[0]
+        predictions.append(yhat)
+    
+    return predictions
+
+# Split the data into training and test sets
+def train_test_split(dataset, split):
+    train = list()
+    train_size = split * len(dataset)
+    test = list(dataset)
+    
+    while len(train) < train_size:
+        index = randrange(len(test))
+        train.append(test.pop(index))
+        
+    return train, test
+
+# Evaluate regression algorithm on training dataset
+def evaluate_simple_linear_regression(dataset, split=0):
+    test_set = list()
+    train, test = train_test_split(dataset, split)
+    
+    for row in dataset:
+        row_copy = list(row)
+        row_copy[-1] = None
+        test_set.append(row_copy)
+
+    #following distinguishes from test set and train set
+    if split == 0:
+        predicted = simple_linear_regression(dataset, test_set)
+    else:
+        predicted = simple_linear_regression(train, test_set)
+    
+    if split == 0:
+        actual = [row[-1] for row in dataset]
+    else:
+        actual = [row[-1] for row in test] 
+    
+    rmse = root_mean_square_error(actual, predicted)
+    return rmse
+
+# Visualise the dataset
+def visualise_dataset(dataset):
+    test_set = list()
+    
+    for row in dataset:
+        row_copy = list(row)
+        row_copy[-1] = None
+        test_set.append(row_copy)
+    
+    sizes, prices = [], []
+    for i in range(len(dataset)):
+        sizes.append(dataset[i][0])
+        prices.append(dataset[i][1])
+        
+    plot.figure()
+    plot.plot(sizes, prices, 'x')
+    plot.plot(test_set, simple_linear_regression(dataset, test_set))
+    plot.xlabel('Size')
+    plot.ylabel('Price')
+    plot.grid()
+    plot.tight_layout()
+    plot.show()
+
+seed(1)
+
+# Load and prepare data
+filename = 'fertility_rate-worker_percent.csv'
+dataset = load_csv(filename, skip=True)
+
+for i in range(len(dataset[0])):
+    string_column_to_float(dataset, i)
+
+# Evaluate algorithm
+
+split = 0.6
+rmse = evaluate_simple_linear_regression(dataset, split)
+
+print('Root Mean Square Error: %.3f' % rmse)
+visualise_dataset(dataset)
