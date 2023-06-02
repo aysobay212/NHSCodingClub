@@ -1,0 +1,47 @@
+from random import seed
+from random import randrange
+from csv import reader
+
+from tabulate import tabulate
+
+def load_csv(filename, skip = False):
+    dataset = list()
+    
+    with open(filename, 'r') as file: #read only
+        csv_reader = reader(file)
+    
+        if skip:
+            next(csv_reader, None)
+
+        for row in csv_reader: #gets each row of the csv file
+            dataset.append(row)
+    
+    return dataset
+
+def print_the_dataset(dataset, contents = True, length = True):
+    if(contents):
+        print(tabulate(dataset))
+        
+    if(length):
+        print(len(dataset))
+
+# Split the big heart dataset into training and test data
+def train_test_split(dataset, split):
+    training = list()
+    train_size = split * len(dataset)
+    test = list(dataset)
+    while len(training) < train_size:
+        index = randrange(len(test))
+        training.append(test.pop(index))
+    return training, test
+
+seed(1)
+filename = 'big_heart.csv'
+
+dataset = load_csv(filename, skip = True)
+print_the_dataset(dataset)
+training, test = train_test_split(dataset, 0.8)
+
+print(len(training))
+
+print(len(test))
