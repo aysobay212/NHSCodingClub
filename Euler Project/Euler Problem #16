@@ -1,0 +1,3 @@
+n = 2**1000
+n_list = [int(x) for x in str(n)]
+print(sum(n_list))
