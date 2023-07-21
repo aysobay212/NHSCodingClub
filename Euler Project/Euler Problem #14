@@ -1,0 +1,21 @@
+starting = 13
+greatest_chain = 0
+while starting <= 1_000_000:
+    n = starting
+    print(starting)
+    current_chain = []
+    current_chain.append(n)
+    while n != 1:
+        if n%2 == 0: #even
+            n = n/2
+            current_chain.append(n)
+        else:
+            n = 3*n + 1
+            current_chain.append(n)
+
+    if len(current_chain) > greatest_chain:
+        greatest_chain = len(current_chain)
+        greatest_chain_value = current_chain[0]
+    starting += 1
+print(greatest_chain)
+print(greatest_chain_value)
