@@ -1,0 +1,23 @@
+import math
+
+def Divisors(n):
+    divisor1 = []
+    for x in range(1, math.ceil(n/2) + 1):
+        if n%x == 0:
+            divisor1.append(x)
+    return divisor1
+
+amicable = []
+for x in range(1, 10_001):
+    returned = Divisors(x) #a list of divisors of x
+    summed = sum(returned) #sum of list of divisors of x
+    returned2 = Divisors(summed) #divisors
+    summed2 = sum(returned2)
+
+    if x == summed2 and x != summed and x not in amicable:
+        amicable.append(x)
+        amicable.append(summed)
+
+print(amicable)
+print(sum(amicable)) 
+
